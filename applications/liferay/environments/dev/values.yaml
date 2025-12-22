@@ -50,7 +50,7 @@ service:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-internal: "true"
   type: LoadBalancer
-  volumeClaimTemplates:
+volumeClaimTemplates:
   - metadata:
     name: liferay-persistent-volume
     spec:
@@ -60,3 +60,4 @@ service:
         requests:
           storage: 20Gi
       storageClassName: gp2
+
