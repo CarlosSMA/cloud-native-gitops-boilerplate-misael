@@ -28,8 +28,6 @@ image:
 ingress:
   annotations:
     nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header X-Forwarded-Proto $scheme;
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/session-cookie-name: "LiferaySticky"
@@ -76,3 +74,4 @@ volumeClaimTemplates:
         requests:
           storage: 20Gi
       storageClassName: gp2
+
