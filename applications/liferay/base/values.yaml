@@ -26,6 +26,8 @@ customInitContainers:
 image:
   tag: 2025.q1.20-lts
 ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
   className: "nginx"
   enabled: true
   rules:
@@ -60,3 +62,4 @@ volumeClaimTemplates:
         requests:
           storage: 20Gi
       storageClassName: gp2
+
