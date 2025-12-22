@@ -1,3 +1,7 @@
+configmap:
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
 customInitContainers:
   x-liferay-prewipe-hypersonic:
     - containerTemplate: |
@@ -60,3 +64,4 @@ volumeClaimTemplates:
         requests:
           storage: 20Gi
       storageClassName: gp2
+
