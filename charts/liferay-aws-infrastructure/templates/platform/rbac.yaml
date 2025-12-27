@@ -2,6 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: {{ .Values.platformSyncWave | default "-20" | quote }}
   labels:
     # Aggregating to crossplane-admin ensures visibility in the console
@@ -19,6 +20,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: {{ .Values.platformSyncWave | default "-20" | quote }}
   name: crossplane-provider-kubernetes-liferay-binding
 subjects:

@@ -2,9 +2,11 @@ apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
   annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: {{ .Values.platformSyncWave | default "-20" | quote }}
   name: liferay-aws-infrastructure.aws.liferay.com
 spec:
+  mode: Resources
   compositeTypeRef:
     apiVersion: aws.liferay.com/v1alpha1
     kind: XLiferayDependencies
