@@ -1,0 +1,119 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.platformSyncWave | default "-20" | quote }}
+  name: liferaydependencies.aws.liferay.com
+spec:
+  group: aws.liferay.com
+  names:
+    kind: XLiferayDependencies
+    plural: liferaydependencies
+  claimNames:
+    kind: LiferayDependencies
+    plural: liferaydependencies
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required:
+                - activeSlot
+              properties:
+                activeSlot:
+                  type: string
+                  enum:
+                    - blue
+                    - green
+                  default: blue
+                blue:
+                  type: object
+                  required:
+                    - database
+                    - storage
+                  database:
+                    type: object
+                    required:
+                      - region
+                    properties:
+                      instanceClass:
+                        type: string
+                        default: db.t3.medium
+                      masterUsername:
+                        type: string
+                        default: liferay_database_admin
+                      region:
+                        type: string
+                      storageGB:
+                        type: integer
+                        default: 20
+                  storage:
+                    type: object
+                    required:
+                      - region
+                    properties:
+                      enableVersioning:
+                        type: boolean
+                        default: true
+                      region:
+                        type: string
+                deletionPolicy:
+                  type: string
+                  enum:
+                    - Delete
+                    - Orphan
+                  default: Delete
+                green:
+                  type: object
+                  required:
+                    - database
+                    - storage
+                  database:
+                    type: object
+                    required:
+                      - region
+                    properties:
+                      instanceClass:
+                        type: string
+                        default: db.t3.medium
+                      masterUsername:
+                        type: string
+                        default: liferay_database_admin
+                      region:
+                        type: string
+                      storageGB:
+                        type: integer
+                        default: 20
+                  storage:
+                    type: object
+                    required:
+                      - region
+                    properties:
+                      enableVersioning:
+                        type: boolean
+                        default: true
+                      region:
+                        type: string
+                restore:
+                  type: object
+                  properties:
+                    snapshotIdentifier:
+                      type: string
+                search:
+                  type: object
+                  default: {}
+                  properties:
+                    instanceType:
+                      type: string
+                      default: t3.small.search
+                    masterUsername:
+                      type: string
+                      default: liferay_search_admin
+                    instanceCount:
+                      type: integer
+                      default: 2

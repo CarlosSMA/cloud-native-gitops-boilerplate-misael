@@ -1,0 +1,19 @@
+apiVersion: aws.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.platformSyncWave | default "-20" | quote }}
+  name: default
+spec:
+  credentials:
+    source: InjectedIdentity # Leverages EKS IRSA
+---
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.platformSyncWave | default "-20" | quote }}
+  name: default
+spec:
+  credentials:
+    source: InjectedIdentity # Uses the provider's service account token

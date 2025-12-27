@@ -1,0 +1,27 @@
+activeSlot: blue
+blue:
+  database:
+    instanceClass: db.t3.medium
+    masterUsername: liferay_database_admin
+    region: us-west-2
+    storageGB: 20
+  storage:
+    enableVersioning: true
+    region: us-west-2
+deletionPolicy: Delete
+green:
+  database:
+    instanceClass: db.t3.medium
+    masterUsername: liferay_database_admin
+    region: us-west-2
+    storageGB: 20
+  storage:
+    enableVersioning: true
+    region: us-west-2
+enabled: false
+restore:
+  snapshotIdentifier: ""
+search:
+  instanceCount: 2
+  instanceType: t3.small.search
+  masterUsername: liferay_search_admin
