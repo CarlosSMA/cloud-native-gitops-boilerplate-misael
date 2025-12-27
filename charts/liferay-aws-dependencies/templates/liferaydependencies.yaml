@@ -1,6 +1,6 @@
 {{- if .Values.enabled -}}
 apiVersion: aws.liferay.com/v1alpha1
-kind: LiferayDependencies
+kind: XLiferayDependencies
 metadata:
   annotations:
     argocd.argoproj.io/sync-wave: {{ .Values.syncWave | default "-10" | quote }}
@@ -17,10 +17,6 @@ spec:
     storage:
       enableVersioning: {{ .Values.blue.storage.enableVersioning }}
       region: {{ .Values.blue.storage.region | quote }}
-  compositionSelector:
-    matchLabels:
-      provider: aws
-      type: liferay
   deletionPolicy: {{ .Values.deletionPolicy | quote }}
   green:
     database:
@@ -39,6 +35,4 @@ spec:
     instanceType: {{ .Values.search.instanceType | quote }}
     instanceCount: {{ .Values.search.instanceCount }}
     masterUsername: {{ .Values.search.masterUsername | quote }}
-  writeConnectionSecretToRef:
-    name: managed-service-details
 {{- end -}}
