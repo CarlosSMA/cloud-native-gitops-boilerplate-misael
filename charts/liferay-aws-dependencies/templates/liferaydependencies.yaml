@@ -1,4 +1,11 @@
 {{- if .Values.enabled -}}
+{{- $db := .Values.database | default dict -}}
+{{- $dbBlue := $db.blue | default dict -}}
+{{- $dbGreen := $db.green | default dict -}}
+{{- $search := .Values.search | default dict -}}
+{{- $storage := .Values.storage | default dict -}}
+{{- $storageBlue := $storage.blue | default dict -}}
+{{- $storageGreen := $storage.green | default dict -}}
 apiVersion: aws.liferay.com/v1alpha1
 kind: LiferayDependencies
 metadata:
@@ -7,32 +14,29 @@ metadata:
   name: {{ include "liferay-aws-infrastructure.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  activeSlot: {{ .Values.activeSlot | quote }}
-  blue:
-    database:
-      instanceClass: {{ .Values.blue.database.instanceClass | quote }}
-      masterUsername: {{ .Values.blue.database.masterUsername | quote }}
-      region: {{ .Values.blue.database.region | quote }}
-      storageGB: {{ .Values.blue.database.storageGB }}
-    storage:
-      enableVersioning: {{ .Values.blue.storage.enableVersioning }}
-      region: {{ .Values.blue.storage.region | quote }}
-  deletionPolicy: {{ .Values.deletionPolicy | quote }}
-  green:
-    database:
-      instanceClass: {{ .Values.green.database.instanceClass | quote }}
-      masterUsername: {{ .Values.green.database.masterUsername | quote }}
-      region: {{ .Values.green.database.region | quote }}
-      storageGB: {{ .Values.green.database.storageGB }}
-    storage:
-      enableVersioning: {{ .Values.green.storage.enableVersioning }}
-      region: {{ .Values.green.storage.region | quote }}
-  {{- with .Values.restore.snapshotIdentifier }}
-  restore:
-    snapshotIdentifier: {{ . | quote }}
-  {{- end }}
+  database:
+    activeSlot: {{ default "blue" $db.activeSlot | quote }}
+    blue:
+      instanceClass: {{ $dbBlue.instanceClass | default "db.t3.medium" | quote }}
+      username: {{ $dbBlue.username | default "liferay_database_admin" | quote }}
+      region: {{ $dbBlue.region | default "us-west-2" | quote }}
+      storageGB: {{ $dbBlue.storageGB | default 20 }}
+    green:
+      instanceClass: {{ $dbGreen.instanceClass | default "db.t3.medium" | quote }}
+      username: {{ $dbGreen.username | default "liferay_database_admin" | quote }}
+      region: {{ $dbGreen.region | default "us-west-2" | quote }}
+      storageGB: {{ $dbGreen.storageGB | default 20 }}
   search:
-    instanceType: {{ .Values.search.instanceType | quote }}
-    instanceCount: {{ .Values.search.instanceCount }}
-    masterUsername: {{ .Values.search.masterUsername | quote }}
+    instanceCount: {{ $search.instanceCount | default 2 }}
+    instanceType: {{ $search.instanceType | default "t3.small.search" | quote }}
+    region: {{ $search.region | default "us-west-2" | quote }}
+    username: {{ $search.username | default "liferay_search_admin" | quote }}
+  storage:
+    activeSlot: {{ $storage.activeSlot | default "blue" | quote }}
+    blue:
+      enableVersioning: {{ $storageBlue.enableVersioning | default true }}
+      region: {{ $storageBlue.region | default "us-west-2" | quote }}
+    green:
+      enableVersioning: {{ $storageGreen.enableVersioning | default true }}
+      region: {{ $storageGreen.region | default "us-west-2" | quote }}
 {{- end -}}
