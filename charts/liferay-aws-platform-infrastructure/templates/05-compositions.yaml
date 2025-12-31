@@ -114,8 +114,13 @@ spec:
             {{- $databaseResourceName := printf "database-%s" $xr.spec.database.activeSlot -}}
             {{- $storageResourceName := printf "storage-%s" $xr.spec.storage.activeSlot -}}
 
-            {{- $database := index .observed.resources $databaseResourceName -}}
-            {{- $storage := index .observed.resources $storageResourceName -}}
+            {{- $database := dict -}}
+            {{- $storage := dict -}}
+
+            {{- if .observed.resources -}}
+              {{- $database := index .observed.resources $databaseResourceName -}}
+              {{- $storage := index .observed.resources $storageResourceName -}}
+            {{- end -}}
 
             {{- $databaseAddress := "" -}}
             {{- if kindIs "map" $database -}}
