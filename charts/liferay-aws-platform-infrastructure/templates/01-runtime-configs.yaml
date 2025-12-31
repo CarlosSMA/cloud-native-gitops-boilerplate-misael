@@ -22,6 +22,7 @@ spec:
           containers:
             - image: xpkg.upbound.io/upbound/provider-kubernetes:v1.2.0
               name: package-runtime
+          serviceAccountName: provider-kubernetes
   serviceAccountTemplate:
     metadata:
       labels:
@@ -53,6 +54,7 @@ spec:
                   memory: 1Gi
                 requests:
                   memory: 512Mi
+          serviceAccountName: provider-aws-rds
   serviceAccountTemplate:
     metadata:
       annotations:
@@ -84,6 +86,7 @@ spec:
                   memory: 1Gi
                 requests:
                   memory: 512Mi
+          serviceAccountName: provider-aws-s3
   serviceAccountTemplate:
     metadata:
       annotations:
