@@ -46,8 +46,7 @@ spec:
             {{`
             {{- $xr := .observed.composite.resource -}}
 
-            # {{- $databaseSlots := dict "blue" $xr.spec.database.blue "green" $xr.spec.database.green -}}
-            {{- $databaseSlots := dict "green" $xr.spec.database.green -}}
+            {{- $databaseSlots := dict "blue" $xr.spec.database.blue "green" $xr.spec.database.green -}}
 
             {{- range $slot, $spec := $databaseSlots -}}
             ---
