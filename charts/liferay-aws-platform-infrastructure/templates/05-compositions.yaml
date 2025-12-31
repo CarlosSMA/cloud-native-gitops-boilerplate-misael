@@ -27,9 +27,8 @@ spec:
               name: debug-crossplane-context
               namespace: liferay-dev
             data:
-              # This will show you exactly what the function sees in the spec
-              xr-spec: |
-                {{ .observed.composite.resource.spec | toYaml | indent 16 }}
+              # We use 'quote' to ensure special characters don't break the YAML key/value
+              xr-spec: {{ .observed.composite.resource.spec | toYaml | quote }}
             `}}
     - step: liferay-infrastructure
       functionRef:
