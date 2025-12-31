@@ -118,22 +118,26 @@ spec:
             {{- $storage := index .observed.resources $storageResourceName -}}
 
             {{- $databaseAddress := "" -}}
-            {{- with $database }}
-              {{- with .resource }}
-                {{- with .status }}
-                  {{- with .atProvider }}
-                    {{- $databaseAddress = .address -}}
+            {{- if kindIs "map" $database -}}
+              {{- with $database }}
+                {{- with .resource }}
+                  {{- with .status }}
+                    {{- with .atProvider }}
+                      {{- $databaseAddress = .address -}}
+                    {{- end -}}
                   {{- end -}}
                 {{- end -}}
               {{- end -}}
             {{- end -}}
 
             {{- $storageName := "" -}}
-            {{- with $storage }}
-              {{- with .resource }}
-                {{- with .metadata }}
-                  {{- with .annotations }}
-                    {{- $storageName = index .annotations "crossplane.io/external-name" -}}
+            {{- if kindIs "map" $storage -}}
+              {{- with $storage }}
+                {{- with .resource }}
+                  {{- with .metadata }}
+                    {{- with .annotations }}
+                      {{- $storageName = index .annotations "crossplane.io/external-name" -}}
+                    {{- end -}}
                   {{- end -}}
                 {{- end -}}
               {{- end -}}
