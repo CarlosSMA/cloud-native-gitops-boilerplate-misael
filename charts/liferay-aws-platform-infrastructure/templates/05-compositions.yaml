@@ -80,6 +80,7 @@ spec:
             metadata:
               annotations:
                 crossplane.io/external-name: {{ $xr.metadata.name }}-storage-versioning-{{ $slot }}
+                gotemplating.fn.crossplane.io/composition-resource-name: storage-versioning-{{ $slot }}
               labels:
                 app: liferay
                 component: storage

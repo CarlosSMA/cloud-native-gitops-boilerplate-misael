@@ -13,7 +13,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: "-20"
-  name: {{ include "liferay-aws-environment-infrastructure.fullname" . }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
 spec:
   database:
