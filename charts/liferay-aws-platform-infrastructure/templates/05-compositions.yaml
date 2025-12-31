@@ -32,7 +32,6 @@ spec:
               annotations:
                 crossplane.io/external-name: {{ $xr.metadata.name }}-database-{{ $slot }}
                 gotemplating.fn.crossplane.io/composition-resource-name: database-{{ $slot }}
-                gotemplating.fn.crossplane.io/ready: "True"
               labels:
                 app: liferay
                 component: database
@@ -70,7 +69,6 @@ spec:
               annotations:
                 crossplane.io/external-name: {{ $xr.metadata.name }}-storage-{{ $slot }}
                 gotemplating.fn.crossplane.io/composition-resource-name: storage-{{ $slot }}
-                gotemplating.fn.crossplane.io/ready: "True"
               labels:
                 app: liferay
                 component: storage
@@ -87,7 +85,6 @@ spec:
               annotations:
                 crossplane.io/external-name: {{ $xr.metadata.name }}-storage-versioning-{{ $slot }}
                 gotemplating.fn.crossplane.io/composition-resource-name: storage-versioning-{{ $slot }}
-                gotemplating.fn.crossplane.io/ready: "True"
               labels:
                 app: liferay
                 component: storage
@@ -163,7 +160,6 @@ spec:
               annotations:
                 crossplane.io/external-name: {{ $xr.metadata.name }}-managed-service-details-secret
                 gotemplating.fn.crossplane.io/composition-resource-name: managed-service-details-secret
-                gotemplating.fn.crossplane.io/ready: "True"
               name: {{ $xr.metadata.name }}-managed-service-details-secret
               namespace: {{ $xr.metadata.namespace }}
             spec:
