@@ -10,29 +10,6 @@ spec:
     kind: LiferayDependencies
   mode: Pipeline
   pipeline:
-    - step: debug-pipeline
-      functionRef:
-        name: function-go-templating
-      input:
-        apiVersion: template.fn.crossplane.io/v1beta1
-        kind: GoTemplate
-        source: Inline
-        inline:
-          template: |
-            {{`
-            ---
-            apiVersion: v1
-            kind: ConfigMap
-            metadata:
-              annotations:
-                crossplane.io/external-name: debug-cm
-                gotemplating.fn.crossplane.io/composition-resource-name: debug-cm
-              name: debug-crossplane-context
-              namespace: liferay-dev
-            data:
-              # We use 'quote' to ensure special characters don't break the YAML key/value
-              xr-spec: {{ .observed.composite.resource.spec | toYaml | quote }}
-            `}}
     - step: liferay-infrastructure
       functionRef:
         name: function-go-templating
@@ -67,11 +44,11 @@ spec:
                 autoGeneratePassword: true
                 engine: postgres
                 engineVersion: "16"
-                instanceClass: {{ $spec.instanceClass }}
+                instanceClass: {{ $spec.instanceClass | quote }}
                 passwordSecretRef:
                   key: password
                   name: liferay-database-{{ $slot }}-password
-                region: {{ $spec.region }}
+                region: {{ $spec.region | quote }}
                 skipFinalSnapshot: true
                 username: {{ $spec.username }}
               providerConfigRef:
@@ -80,69 +57,6 @@ spec:
               writeConnectionSecretToRef:
                 name: liferay-database-{{ $slot }}-credentials
             {{- end }}
-
-            ---
-            apiVersion: rds.aws.m.upbound.io/v1beta1
-            kind: Instance
-            metadata:
-              annotations:
-                crossplane.io/external-name: {{ $xr.metadata.name }}-database-blue
-                gotemplating.fn.crossplane.io/composition-resource-name: database-blue
-              labels:
-                app: liferay
-                component: database
-                slot: blue
-              name: {{ $xr.metadata.name }}-database-blue
-              namespace: {{ $xr.metadata.namespace }}
-            spec:
-              forProvider:
-                allocatedStorage: 20
-                autoGeneratePassword: true
-                engine: postgres
-                engineVersion: "16"
-                instanceClass: "db.t3.medium"
-                passwordSecretRef:
-                  key: password
-                  name: liferay-database-blue-password
-                region: "us-west-2"
-                skipFinalSnapshot: true
-                username: liferay_database_admin
-              providerConfigRef:
-                kind: ClusterProviderConfig
-                name: default
-              writeConnectionSecretToRef:
-                name: liferay-database-blue-credentials
-            ---
-            apiVersion: rds.aws.m.upbound.io/v1beta1
-            kind: Instance
-            metadata:
-              annotations:
-                crossplane.io/external-name: {{ $xr.metadata.name }}-database-green
-                gotemplating.fn.crossplane.io/composition-resource-name: database-green
-              labels:
-                app: liferay
-                component: database
-                slot: green
-              name: {{ $xr.metadata.name }}-database-green
-              namespace: {{ $xr.metadata.namespace }}
-            spec:
-              forProvider:
-                allocatedStorage: 20
-                autoGeneratePassword: true
-                engine: postgres
-                engineVersion: "16"
-                instanceClass: "db.t3.medium"
-                passwordSecretRef:
-                  key: password
-                  name: liferay-database-green-password
-                region: "us-west-2"
-                skipFinalSnapshot: true
-                username: liferay_database_admin
-              providerConfigRef:
-                kind: ClusterProviderConfig
-                name: default
-              writeConnectionSecretToRef:
-                name: liferay-database-green-credentials
 
             {{- $storageSlots := dict "blue" $xr.spec.storage.blue "green" $xr.spec.storage.green -}}
 
@@ -162,7 +76,7 @@ spec:
               namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
-                region: {{ $spec.region }}
+                region: {{ $spec.region | quote }}
             ---
             apiVersion: s3.aws.m.upbound.io/v1beta1
             kind: BucketVersioning
