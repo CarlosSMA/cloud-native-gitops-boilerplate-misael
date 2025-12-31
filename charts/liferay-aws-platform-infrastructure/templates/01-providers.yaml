@@ -4,6 +4,16 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: "-90"
+  name: provider-aws-iam
+spec:
+  package: xpkg.upbound.io/upbound/provider-aws-iam:v2.3.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    argocd.argoproj.io/sync-wave: "-90"
   name: provider-aws-rds
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-rds:v2.3.0
