@@ -141,7 +141,7 @@ spec:
                 {{- with .resource }}
                   {{- with .metadata }}
                     {{- with .annotations }}
-                      {{- $storageName = index .annotations "crossplane.io/external-name" -}}
+                      {{- $storageName = index . "crossplane.io/external-name" -}}
                     {{- end -}}
                   {{- end -}}
                 {{- end -}}
