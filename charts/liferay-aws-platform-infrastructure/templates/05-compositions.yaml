@@ -32,6 +32,7 @@ spec:
             data:
               # We use 'quote' to ensure special characters don't break the YAML key/value
               xr-spec: {{ .observed.composite.resource.spec | toYaml | quote }}
+            ---
             `}}
     - step: liferay-infrastructure
       functionRef:
@@ -81,38 +82,7 @@ spec:
               writeConnectionSecretToRef:
                 name: liferay-database-{{ $slot }}-credentials
             {{- end }}
-
             ---
-            apiVersion: rds.aws.m.upbound.io/v1beta1
-            kind: Instance
-            metadata:
-              annotations:
-                crossplane.io/external-name: {{ $xr.metadata.name }}-database-blue
-                gotemplating.fn.crossplane.io/composition-resource-name: database-blue
-              labels:
-                app: liferay
-                component: database
-                slot: blue
-              name: {{ $xr.metadata.name }}-database-blue
-              namespace: {{ $xr.metadata.namespace }}
-            spec:
-              forProvider:
-                allocatedStorage: 20
-                autoGeneratePassword: true
-                engine: postgres
-                engineVersion: "16"
-                instanceClass: "db.t3.medium"
-                passwordSecretRef:
-                  key: password
-                  name: liferay-database-blue-password
-                region: "us-west-2"
-                skipFinalSnapshot: true
-                username: liferay_database_admin
-              providerConfigRef:
-                kind: ClusterProviderConfig
-                name: default
-              writeConnectionSecretToRef:
-                name: liferay-database-blue-credentials
 
             {{- $storageSlots := dict "blue" $xr.spec.storage.blue "green" $xr.spec.storage.green -}}
 
@@ -158,6 +128,7 @@ spec:
                 versioningConfiguration:
                   status: Enabled
             {{- end }}
+            ---
             `}}
     - step: managed-service-details-secret
       functionRef:
