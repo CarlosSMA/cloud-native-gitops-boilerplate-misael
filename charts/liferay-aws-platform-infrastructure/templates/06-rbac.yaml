@@ -4,7 +4,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   annotations:
-    argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: "-40"
   labels:
     rbac.crossplane.io/aggregate-to-crossplane: "true"
@@ -21,7 +20,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
-    argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: "-40"
   name: crossplane-provider-kubernetes-liferay-binding
 subjects:

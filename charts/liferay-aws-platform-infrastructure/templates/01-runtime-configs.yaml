@@ -26,6 +26,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/managed-by: liferay-infrastructure-chart
+      name: provider-kubernetes
 ---
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
