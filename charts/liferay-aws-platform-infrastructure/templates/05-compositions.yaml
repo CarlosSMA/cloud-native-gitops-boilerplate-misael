@@ -24,7 +24,7 @@ spec:
 
             {{- $databaseSlots := dict "blue" $xr.spec.database.blue "green" $xr.spec.database.green -}}
 
-            {{- range $databaseSlot, $databaseSpec := $databaseSlots -}}
+            {{- range $databaseSlot, $databaseSpec := $databaseSlots }}
             ---
             apiVersion: rds.aws.m.upbound.io/v1beta1
             kind: Instance
@@ -58,11 +58,9 @@ spec:
                 name: liferay-database-{{ $databaseSlot }}-credentials
             {{- end }}
 
-            ---
-
             {{- $storageSlots := dict "blue" $xr.spec.storage.blue "green" $xr.spec.storage.green -}}
 
-            {{- range $storageSlot, $storageSpec := $storageSlots -}}
+            {{- range $storageSlot, $storageSpec := $storageSlots }}
             ---
             apiVersion: s3.aws.m.upbound.io/v1beta1
             kind: Bucket
