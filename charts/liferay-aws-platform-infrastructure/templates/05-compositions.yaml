@@ -26,7 +26,7 @@ spec:
 
             {{- range $slot, $spec := $databaseSlots -}}
             ---
-            apiVersion: rds.aws.upbound.io/v1beta1
+            apiVersion: rds.aws.m.upbound.io/v1beta1
             kind: Instance
             metadata:
               annotations:
@@ -59,7 +59,7 @@ spec:
 
             {{- range $slot, $spec := $storageSlots -}}
             ---
-            apiVersion: s3.aws.upbound.io/v1beta1
+            apiVersion: s3.aws.m.upbound.io/v1beta1
             kind: Bucket
             metadata:
               annotations:
@@ -75,7 +75,7 @@ spec:
               forProvider:
                 region: {{ $spec.region }}
             ---
-            apiVersion: s3.aws.upbound.io/v1beta1
+            apiVersion: s3.aws.m.upbound.io/v1beta1
             kind: BucketVersioning
             metadata:
               annotations:
