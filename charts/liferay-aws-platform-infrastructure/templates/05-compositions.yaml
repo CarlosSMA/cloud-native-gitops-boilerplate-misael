@@ -114,49 +114,59 @@ spec:
             {{- $databaseResourceName := printf "database-%s" $xr.spec.database.activeSlot -}}
             {{- $storageResourceName := printf "storage-%s" $xr.spec.storage.activeSlot -}}
 
-            {{- $database := "" -}}
-            {{- $storage := "" -}}
-
-            {{- range $name, $res := .observed.resources }}
-              {{- if eq $name $databaseResourceName }}{{ $database = $res }}{{ end }}
-              {{- if eq $name $storageResourceName }}{{ $storage = $res }}{{ end }}
-            {{- end }}
+            {{- $database := index .observed.resources $databaseResourceName -}}
+            {{- $storage := index .observed.resources $storageResourceName -}}
 
             {{- $databaseAddress := "" -}}
-            {{- if $database.resource -}}
-              {{- if $database.resource.status -}}
-                {{- if $database.resource.status.atProvider -}}
-                  {{- $databaseAddress = $database.resource.status.atProvider.address -}}
+            {{- with $database }}
+              {{- with .resource }}
+                {{- with .status }}
+                  {{- with .atProvider }}
+                    {{- $databaseAddress = .address -}}
+                  {{- end -}}
                 {{- end -}}
               {{- end -}}
             {{- end -}}
 
             {{- $storageName := "" -}}
-            {{- if $storage.resource -}}
-              {{- if $storage.resource.metadata -}}
-                {{- if $storage.resource.metadata.annotations -}}
-                  {{- $storageName = index $storage.resource.metadata.annotations "crossplane.io/external-name" -}}
+            {{- with $storage }}
+              {{- with .resource }}
+                {{- with .metadata }}
+                  {{- with .annotations }}
+                    {{- $storageName = index .annotations "crossplane.io/external-name" -}}
+                  {{- end -}}
                 {{- end -}}
               {{- end -}}
             {{- end -}}
 
-            {{- if and $databaseAddress $storageName }}
+            {{- if and $databaseAddress $storageName $database.connectionDetails }}
             ---
-            apiVersion: v1
-            kind: Secret
+            apiVersion: kubernetes.m.crossplane.io/v1alpha1
+            kind: Object
             metadata:
-              name: managed-service-details
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-managed-service-details-secret
+                gotemplating.fn.crossplane.io/composition-resource-name: managed-service-details-secret
+              name: {{ $xr.metadata.name }}-managed-service-details-secret
               namespace: {{ $xr.metadata.namespace }}
-            type: Opaque
-            stringData:
-              DATABASE_ENDPOINT: {{ $databaseAddress | toString }}
-              DATABASE_PASSWORD: {{ $database.connectionDetails.password | default "" | toString }}
-              DATABASE_PORT: "{{ $database.resource.status.atProvider.port | default 5432 }}"
-              DATABASE_USERNAME: {{ $database.resource.spec.forProvider.username | toString }}
-              OPENSEARCH_ENDPOINT: ""
-              OPENSEARCH_PASSWORD: ""
-              OPENSEARCH_USERNAME: ""
-              S3_BUCKET_ID: {{ $storageName | toString }}
-              S3_BUCKET_REGION: {{ $storage.resource.spec.forProvider.region | toString }}
+            spec:
+              forProvider:
+                manifest:
+                  apiVersion: v1
+                  kind: Secret
+                  metadata:
+                    name: managed-service-details
+                    namespace: {{ $xr.metadata.namespace }}
+                  type: Opaque
+                  stringData:
+                    DATABASE_ENDPOINT: {{ $databaseAddress | toString }}
+                    DATABASE_PASSWORD: {{ $database.connectionDetails.password | default "" | toString }}
+                    DATABASE_PORT: "{{ $database.resource.status.atProvider.port | default 5432 }}"
+                    DATABASE_USERNAME: {{ $database.resource.spec.forProvider.username | toString }}
+                    OPENSEARCH_ENDPOINT: ""
+                    OPENSEARCH_PASSWORD: ""
+                    OPENSEARCH_USERNAME: ""
+                    S3_BUCKET_ID: {{ $storageName | toString }}
+                    S3_BUCKET_REGION: {{ $storage.resource.spec.forProvider.region | toString }}
             {{- end }}
             `}}
