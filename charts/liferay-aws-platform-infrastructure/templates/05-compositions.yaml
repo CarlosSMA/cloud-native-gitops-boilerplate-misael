@@ -21,10 +21,9 @@ spec:
           template: |
             {{`
             {{ $accountId := "`}}{{ .Values.aws.accountId }}{{`" }}
-            {{ $deploymenName := "`}}{{ .Values.deploymentName }}{{`" }}
             {{ $liferayServiceAccountRoleName := "`}}{{ .Values.liferayServiceAccountRoleName }}{{`" }}
             {{ $nodesSecurityGroupId := "`}}{{ .Values.aws.nodesSecurityGroupId }}{{`" }}
-            {{ $privateSubnetIds := "`}}{{ .Values.aws.privateSubnetIds }}{{`" }}
+            {{ $privateSubnetIds := "`}}{{ .Values.aws.privateSubnetIds | toJson }}{{`" }}
             {{ $vpcId := "`}}{{ .Values.aws.vpcId }}{{`" }}
             {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
             {{- $xr := .observed.composite.resource -}}
