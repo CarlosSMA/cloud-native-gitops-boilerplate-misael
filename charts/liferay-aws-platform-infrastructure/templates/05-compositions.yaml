@@ -19,14 +19,14 @@ spec:
         source: Inline
         inline:
           template: |
+            {{- $accountId := .Values.aws.accountId -}}
+            {{- $deploymentName := .Values.deploymentName -}}
+            {{- $liferayServiceAccountRoleName := .Values.liferayServiceAccountRoleName -}}
+            {{- $nodesSecurityGroupId := .Values.aws.nodesSecurityGroupId -}}
+            {{- $privateSubnetIds := .Values.aws.privateSubnetIds -}}
+            {{- $vpcId := .Values.aws.vpcId -}}
             {{`
-            {{- $accountId := "`}}{{ .Values.aws.accountId }}{{`" -}}
-            {{- $deploymentName := "`}}{{ .Values.deploymentName }}{{`" -}}
-            {{- $liferayServiceAccountRoleName := "`}}{{ .Values.liferayServiceAccountRoleName }}{{`" -}}
-            {{- $nodesSecurityGroupId := "`}}{{ .Values.aws.nodesSecurityGroupId }}{{`" -}}
-            {{- $privateSubnetIds := "`}}{{ .Values.aws.privateSubnetIds }}{{`" -}}
             {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
-            {{- $vpcId := "`}}{{ .Values.aws.vpcId }}{{`" -}}
             {{- $xr := .observed.composite.resource -}}
 
             {{- $databaseSpec := $xr.spec.database }}
