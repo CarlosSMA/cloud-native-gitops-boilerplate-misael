@@ -20,12 +20,12 @@ spec:
         inline:
           template: |
             {{`
-            {{ $accountId := "`}}{{ .Values.aws.accountId }}{{`" }}
-            {{ $liferayServiceAccountRoleName := "`}}{{ .Values.liferayServiceAccountRoleName }}{{`" }}
-            {{ $nodesSecurityGroupId := "`}}{{ .Values.aws.nodesSecurityGroupId }}{{`" }}
-            {{ $vpcId := "`}}{{ .Values.aws.vpcId }}{{`" }}
-            {{ $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | toJson | quote }}{{` }}
-            {{- $privateSubnetIdsList := $privateSubnetIds | toJson | fromJson -}}
+            {{ $accountId := `}}{{ .Values.aws.accountId | quote }}{{` }}
+            {{ $liferayServiceAccountRoleName := `}}{{ .Values.liferayServiceAccountRoleName | quote }}{{` }}
+            {{ $nodesSecurityGroupId := `}}{{ .Values.aws.nodesSecurityGroupId | quote }}{{` }}
+            {{ $vpcId := `}}{{ .Values.aws.vpcId | quote }}{{` }}
+            {{ $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | quote }}{{` }}
+            {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
             {{- $xr := .observed.composite.resource -}}
 
             {{- $databaseSpec := $xr.spec.database }}
