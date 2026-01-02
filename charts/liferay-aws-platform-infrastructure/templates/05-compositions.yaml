@@ -26,6 +26,12 @@ spec:
             {{- $privateSubnetIds := .Values.aws.privateSubnetIds -}}
             {{- $vpcId := .Values.aws.vpcId -}}
             {{`
+            {{- $accountId := "`}}{{ $accountId }}{{`" -}}
+            {{- $nodesSecurityGroupId := "`}}{{ $nodesSecurityGroupId }}{{`" -}}
+            {{- $vpcId := "`}}{{ $vpcId }}{{`" -}}
+            {{- $privateSubnetIds := "`}}{{ $privateSubnetIds }}{{`" -}}
+            {{- $liferayServiceAccountRoleName := "`}}{{ $liferayServiceAccountRoleName }}{{`" -}}
+
             {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
             {{- $xr := .observed.composite.resource -}}
 
@@ -48,7 +54,6 @@ spec:
               namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
-                managementPolicies: ["Observe"]
                 allocatedStorage: {{ $spec.storageGB }}
                 autoGeneratePassword: true
                 dbSubnetGroupNameSelector:
