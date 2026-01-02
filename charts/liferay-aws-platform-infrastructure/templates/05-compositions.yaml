@@ -20,9 +20,17 @@ spec:
         inline:
           template: |
             {{`
+            {{- $accountId := "`}}{{ .Values.aws.accountId }}{{`" -}}
+            {{- $deploymentName := "`}}{{ .Values.deploymentName }}{{`" -}}
+            {{- $liferayServiceAccountRoleName := "`}}{{ .Values.liferayServiceAccountRoleName }}{{`" -}}
+            {{- $nodesSecurityGroupId := "`}}{{ .Values.aws.nodesSecurityGroupId }}{{`" -}}
+            {{- $privateSubnetIds := "`}}{{ .Values.aws.privateSubnetIds }}{{`" -}}
+            {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
+            {{- $vpcId := "`}}{{ .Values.aws.vpcId }}{{`" -}}
             {{- $xr := .observed.composite.resource -}}
 
-            {{- $databaseSlots := dict "blue" $xr.spec.database.blue "green" $xr.spec.database.green -}}
+            {{- $databaseSpec := $xr.spec.database }}
+            {{- $databaseSlots := dict "blue" $databaseSpec.blue "green" $databaseSpec.green -}}
 
             {{- range $slot, $spec := $databaseSlots }}
             ---
@@ -42,6 +50,8 @@ spec:
               forProvider:
                 allocatedStorage: {{ $spec.storageGB }}
                 autoGeneratePassword: true
+                dbSubnetGroupNameSelector:
+                  matchControllerRef: true
                 engine: postgres
                 engineVersion: "16.11"
                 identifier: {{ $xr.metadata.name }}-database-{{ $slot }}
@@ -52,11 +62,56 @@ spec:
                 region: {{ $spec.region }}
                 skipFinalSnapshot: true
                 username: {{ $spec.username }}
+                vpcSecurityGroupIdSelector:
+                  matchControllerRef: true
+                tags:
+                  Active: {{ printf "%t" (eq $slot $databaseSpec.activeSlot) }}
+                  Backup: true
+                  Name: {{ $xr.metadata.name }}-database-{{ $slot }}
               writeConnectionSecretToRef:
                 name: liferay-database-{{ $slot }}-credentials
+            ---
+            apiVersion: ec2.aws.m.upbound.io/v1beta1
+            kind: SecurityGroup
+            metadata:
+              crossplane.io/external-name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
+              gotemplating.fn.crossplane.io/composition-resource-name: database-security-group-{{ $slot }}
+            spec:
+              forProvider:
+                name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
+                tags:
+                  Name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
+                vpcId: {{ $vpcId }}
+            ---
+            apiVersion: ec2.aws.m.upbound.io/v1beta1
+            kind: SecurityGroupIngressRule
+            metadata:
+              crossplane.io/external-name: {{ $xr.metadata.name }}-database-security-group-ingress-{{ $slot }}
+              gotemplating.fn.crossplane.io/composition-resource-name: database-security-group-ingress-{{ $slot }}
+            spec:
+              forProvider:
+                fromPort: 5432
+                ipProtocol: tcp
+                toPort: 5432
+                referencedSecurityGroupId: {{ $nodesSecurityGroupId }}
+                securityGroupIdSelector:
+                  matchControllerRef: true
+            ---
+            apiVersion: rds.aws.m.upbound.io/v1beta1
+            kind: SubnetGroup
+            metadata:
+              crossplane.io/external-name: {{ $xr.metadata.name }}-database-subnet-group-{{ $slot }}
+              gotemplating.fn.crossplane.io/composition-resource-name: database-subnet-group-{{ $slot }}
+            spec:
+              forProvider:
+                region: {{ $spec.region }}
+                subnetIds: {{ $privateSubnetIdsList | toJson }}
+                tags:
+                  Name: {{ $xr.metadata.name }}-database-{{ $slot }}-subnets
             {{- end }}
 
-            {{- $storageSlots := dict "blue" $xr.spec.storage.blue "green" $xr.spec.storage.green -}}
+            {{- $storageSpec := $xr.spec.storage }}
+            {{- $storageSlots := dict "blue" $storageSpec.blue "green" $storageSpec.green -}}
 
             {{- range $slot, $spec := $storageSlots }}
             ---
@@ -75,6 +130,10 @@ spec:
             spec:
               forProvider:
                 region: {{ $spec.region }}
+                tags:
+                  Active: {{ printf "%t" (eq $slot $storageSpec.activeSlot) }}
+                  Backup: true
+                  Name: {{ $xr.metadata.name }}-storage-{{ $slot }}
             ---
             apiVersion: s3.aws.m.upbound.io/v1beta1
             kind: BucketVersioning
@@ -99,7 +158,153 @@ spec:
                 region: {{ $spec.region }}
                 versioningConfiguration:
                   status: Enabled
+            ---
+            apiVersion: iam.aws.m.upbound.io/v1beta1
+            kind: Policy
+            metadata:
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-storage-policy-{{ $slot }}
+                gotemplating.fn.crossplane.io/composition-resource-name: storage-policy-{{ $slot }}
+            spec:
+              forProvider:
+                name: {{ $xr.metadata.name }}-storage-{{ $slot }}
+                policy: |
+                  {
+                    "Statement": [
+                      {
+                        "Action": [
+                          "s3:DeleteObject",
+                          "s3:GetObject",
+                          "s3:ListBucket",
+                          "s3:PutObject"
+                        ],
+                        "Effect": "Allow",
+                        "Resource": [
+                          "arn:aws:s3:::{{ $xr.metadata.name }}-storage-{{ $slot }}",
+                          "arn:aws:s3:::{{ $xr.metadata.name }}-storage-{{ $slot }}/*"
+                        ]
+                      },
+                    ]
+                    "Version": "2012-10-17"
+                  }
+            ---
+            apiVersion: iam.aws.m.upbound.io/v1beta1
+            kind: RolePolicyAttachment
+            metadata:
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-storage-policy-attachment-{{ $slot }}
+                gotemplating.fn.crossplane.io/composition-resource-name: storage-policy-attachment-{{ $slot }}
+            spec:
+              forProvider:
+                policyArnSelector:
+                  matchLabels:
+                    gotemplating.fn.crossplane.io/composition-resource-name: storage-policy-{{ $slot }}
+                role: {{ $liferayServiceAccountRoleName }}
             {{- end }}
+
+            {{- $searchSpec := $xr.spec.search }}
+
+            ---
+            apiVersion: opensearchservice.aws.m.upbound.io/v1beta1
+            kind: Domain
+            metadata:
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-search
+                gotemplating.fn.crossplane.io/composition-resource-name: search
+              labels:
+                app: liferay
+                component: search
+              name: {{ $xr.metadata.name }}-search
+              namespace: {{ $xr.metadata.namespace }}
+            spec:
+              forProvider:
+                region: {{ $searchSpec.region }}
+                engineVersion: {{ $searchSpec.engineVersion }}
+                clusterConfig:
+                  instanceCount: {{ $searchSpec.instanceCount }}
+                  instanceType: {{ $searchSpec.instanceType }}
+                  zoneAwarenessEnabled: true
+                  zoneAwarenessConfig:
+                    availabilityZoneCount: 2
+                ebsOptions:
+                  ebsEnabled: true
+                  volumeSize: 20
+                  volumeType: gp3
+                advancedSecurityOptions:
+                  enabled: true
+                  internalUserDatabaseEnabled: true
+                  masterUserOptions:
+                    masterUserName: {{ $searchSpec.username }}
+                    masterUserPasswordSecretRef:
+                      name: liferay-search-password
+                      key: password
+                encryptAtRest:
+                  enabled: true
+                nodeToNodeEncryption:
+                  enabled: true
+                domainEndpointOptions:
+                  enforceHttps: true
+                  tlsSecurityPolicy: Policy-Min-TLS-1-2-2019-07
+                tags:
+                  Name: {{ $xr.metadata.name }}-search
+                vpcOptions:
+                  securityGroupIdSelector:
+                    matchControllerRef: true
+                  subnetIds: {{ slice $privateSubnetIdsList 0 2 | toJson }}
+              writeConnectionSecretToRef:
+                name: liferay-search-credentials
+            ---
+            apiVersion: opensearchservice.aws.m.upbound.io/v1beta1
+            kind: DomainPolicy
+            metadata:
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-search-policy
+                gotemplating.fn.crossplane.io/composition-resource-name: search-policy
+            spec:
+              forProvider:
+                domainNameSelector:
+                  matchControllerRef: true
+                region: {{ $searchSpec.region }}
+                accessPolicies: |
+                  {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Action": "es:*",
+                        "Effect": "Allow",
+                        "Principal": {
+                          "AWS": "arn:aws:iam::{{ $accountId }}:role/{{ $liferayServiceAccountRoleName }}"
+                        },
+                        "Resource": "arn:aws:es:{{ $searchSpec.region }}:{{ $accountId }}:domain/{{ $xr.metadata.name }}-search/*"
+                      }
+                    ]
+                  }
+            ---
+            apiVersion: ec2.aws.m.upbound.io/v1beta1
+            kind: SecurityGroup
+            metadata:
+              crossplane.io/external-name: {{ $xr.metadata.name }}-search-security-group
+              gotemplating.fn.crossplane.io/composition-resource-name: search-security-group
+            spec:
+              forProvider:
+                name: {{ $xr.metadata.name }}-search-security-group
+                tags:
+                  Name: {{ $xr.metadata.name }}-search-security-group
+                vpcId: {{ $vpcId }}
+            ---
+            apiVersion: ec2.aws.m.upbound.io/v1beta1
+            kind: SecurityGroupIngressRule
+            metadata:
+              crossplane.io/external-name: {{ $xr.metadata.name }}-search-security-group-ingress
+              gotemplating.fn.crossplane.io/composition-resource-name: search-security-group-ingress
+            spec:
+              forProvider:
+                fromPort: 443
+                ipProtocol: tcp
+                toPort: 443
+                referencedSecurityGroupId: {{ $nodesSecurityGroupId }}
+                securityGroupIdSelector:
+                  matchControllerRef: true
             `}}
     - step: managed-service-details-secret
       functionRef:
@@ -113,13 +318,16 @@ spec:
             {{`
             {{- $xr := .observed.composite.resource -}}
             {{- $databaseResourceName := printf "database-%s" $xr.spec.database.activeSlot -}}
+            {{- $searchResourceName := "search" -}}
             {{- $storageResourceName := printf "storage-%s" $xr.spec.storage.activeSlot -}}
 
             {{- $database := dict -}}
+            {{- $search := dict -}}
             {{- $storage := dict -}}
 
             {{- if .observed.resources -}}
               {{- $database = index .observed.resources $databaseResourceName -}}
+              {{- $search = index .observed.resources $searchResourceName -}}
               {{- $storage = index .observed.resources $storageResourceName -}}
             {{- end -}}
 
@@ -130,6 +338,19 @@ spec:
                   {{- with .status }}
                     {{- with .atProvider }}
                       {{- $databaseAddress = .address -}}
+                    {{- end -}}
+                  {{- end -}}
+                {{- end -}}
+              {{- end -}}
+            {{- end -}}
+
+            {{- $searchEndpoint := "" -}}
+            {{- if kindIs "map" $search -}}
+              {{- with $search }}
+                {{- with .resource }}
+                  {{- with .status }}
+                    {{- with .atProvider }}
+                      {{- $searchEndpoint = .endpoint -}}
                     {{- end -}}
                   {{- end -}}
                 {{- end -}}
@@ -149,7 +370,7 @@ spec:
               {{- end -}}
             {{- end -}}
 
-            {{- if and $databaseAddress $storageName $database.connectionDetails }}
+            {{- if and $database.connectionDetails $databaseAddress $searchEndpoint $storageName }}
             ---
             apiVersion: kubernetes.m.crossplane.io/v1alpha1
             kind: Object
@@ -171,15 +392,25 @@ spec:
                   stringData:
                     DATABASE_ENDPOINT: {{ $databaseAddress | toString }}
                     DATABASE_PASSWORD: {{ $database.connectionDetails.password | default "" | toString }}
-                    DATABASE_PORT: "{{ $database.resource.status.atProvider.port | default 5432 }}"
+                    DATABASE_PORT: {{ $database.resource.status.atProvider.port | default 5432 | toString }}
                     DATABASE_USERNAME: {{ $database.resource.spec.forProvider.username | toString }}
-                    OPENSEARCH_ENDPOINT: ""
-                    OPENSEARCH_PASSWORD: ""
-                    OPENSEARCH_USERNAME: ""
+                    OPENSEARCH_ENDPOINT: "https://{{ $searchEndpoint }}"
+                    OPENSEARCH_PASSWORD: {{ $search.connectionDetails.password | default "" | toString }}
+                    OPENSEARCH_USERNAME: {{ $search.resource.spec.username }}
                     S3_BUCKET_ID: {{ $storageName | toString }}
                     S3_BUCKET_REGION: {{ $storage.resource.spec.forProvider.region | toString }}
             {{- end }}
             `}}
+    - step: apply-default-tags
+      functionRef:
+        name: function-tag-manager
+      input:
+        apiVersion: tag.fn.crossplane.io/v1beta1
+        kind: TagResources
+        spec:
+          tags:
+            - key: DeploymentName
+              value: {{ .Values.deploymentName }}
     - step: auto-detect-ready-composed-resources
       functionRef:
         name: function-auto-ready

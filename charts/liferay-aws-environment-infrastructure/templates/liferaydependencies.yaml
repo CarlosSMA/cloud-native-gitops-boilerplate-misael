@@ -29,6 +29,7 @@ spec:
       region: {{ $dbGreen.region | default "us-west-2" | quote }}
       storageGB: {{ $dbGreen.storageGB | default 20 }}
   search:
+    engineVersion: {{ $search.engineVersion | default "OpenSearch_2.15" | quote }}
     instanceCount: {{ $search.instanceCount | default 2 }}
     instanceType: {{ $search.instanceType | default "t3.small.search" | quote }}
     region: {{ $search.region | default "us-west-2" | quote }}

@@ -35,6 +35,102 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: ServerSideApply=true
     argocd.argoproj.io/sync-wave: "-90"
+  name: aws-ec2-config
+spec:
+  deploymentTemplate:
+    spec:
+      selector:
+        matchLabels:
+          pkg.crossplane.io/provider: provider-aws-ec2
+      template:
+        metadata:
+          labels:
+            pkg.crossplane.io/provider: provider-aws-ec2
+        spec:
+          containers:
+            - name: package-runtime
+              resources:
+                limits:
+                  memory: 1Gi
+                requests:
+                  memory: 512Mi
+          serviceAccountName: provider-aws-ec2
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::{{ $accountId }}:role/{{ $cluster }}-provider-aws-ec2-role
+      name: provider-aws-ec2
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    argocd.argoproj.io/sync-wave: "-90"
+  name: aws-iam-config
+spec:
+  deploymentTemplate:
+    spec:
+      selector:
+        matchLabels:
+          pkg.crossplane.io/provider: provider-aws-iam
+      template:
+        metadata:
+          labels:
+            pkg.crossplane.io/provider: provider-aws-iam
+        spec:
+          containers:
+            - name: package-runtime
+              resources:
+                limits:
+                  memory: 1Gi
+                requests:
+                  memory: 512Mi
+          serviceAccountName: provider-aws-iam
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::{{ $accountId }}:role/{{ $cluster }}-provider-aws-iam-role
+      name: provider-aws-iam
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    argocd.argoproj.io/sync-wave: "-90"
+  name: aws-opensearch-config
+spec:
+  deploymentTemplate:
+    spec:
+      selector:
+        matchLabels:
+          pkg.crossplane.io/provider: provider-aws-opensearch
+      template:
+        metadata:
+          labels:
+            pkg.crossplane.io/provider: provider-aws-opensearch
+        spec:
+          containers:
+            - name: package-runtime
+              resources:
+                limits:
+                  memory: 1Gi
+                requests:
+                  memory: 512Mi
+          serviceAccountName: provider-aws-opensearch
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::{{ $accountId }}:role/{{ $cluster }}-provider-aws-opensearch-role
+      name: provider-aws-opensearch
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    argocd.argoproj.io/sync-wave: "-90"
   name: aws-rds-config
 spec:
   deploymentTemplate:

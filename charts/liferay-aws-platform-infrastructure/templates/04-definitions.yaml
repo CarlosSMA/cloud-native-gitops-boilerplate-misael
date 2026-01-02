@@ -64,6 +64,9 @@ spec:
                   type: object
                 search:
                   properties:
+                    engineVersion:
+                      type: string
+                      default: "OpenSearch_2.15"
                     instanceCount:
                       type: integer
                       default: 2
