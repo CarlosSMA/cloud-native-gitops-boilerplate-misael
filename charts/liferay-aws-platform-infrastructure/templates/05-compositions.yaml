@@ -73,8 +73,9 @@ spec:
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroup
             metadata:
-              crossplane.io/external-name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
-              gotemplating.fn.crossplane.io/composition-resource-name: database-security-group-{{ $slot }}
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
+                gotemplating.fn.crossplane.io/composition-resource-name: database-security-group-{{ $slot }}
             spec:
               forProvider:
                 name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
@@ -85,8 +86,9 @@ spec:
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroupIngressRule
             metadata:
-              crossplane.io/external-name: {{ $xr.metadata.name }}-database-security-group-ingress-{{ $slot }}
-              gotemplating.fn.crossplane.io/composition-resource-name: database-security-group-ingress-{{ $slot }}
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-database-security-group-ingress-{{ $slot }}
+                gotemplating.fn.crossplane.io/composition-resource-name: database-security-group-ingress-{{ $slot }}
             spec:
               forProvider:
                 fromPort: 5432
@@ -99,8 +101,9 @@ spec:
             apiVersion: rds.aws.m.upbound.io/v1beta1
             kind: SubnetGroup
             metadata:
-              crossplane.io/external-name: {{ $xr.metadata.name }}-database-subnet-group-{{ $slot }}
-              gotemplating.fn.crossplane.io/composition-resource-name: database-subnet-group-{{ $slot }}
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-database-subnet-group-{{ $slot }}
+                gotemplating.fn.crossplane.io/composition-resource-name: database-subnet-group-{{ $slot }}
             spec:
               forProvider:
                 region: {{ $spec.region }}
@@ -282,8 +285,9 @@ spec:
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroup
             metadata:
-              crossplane.io/external-name: {{ $xr.metadata.name }}-search-security-group
-              gotemplating.fn.crossplane.io/composition-resource-name: search-security-group
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-search-security-group
+                gotemplating.fn.crossplane.io/composition-resource-name: search-security-group
             spec:
               forProvider:
                 name: {{ $xr.metadata.name }}-search-security-group
@@ -294,8 +298,9 @@ spec:
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroupIngressRule
             metadata:
-              crossplane.io/external-name: {{ $xr.metadata.name }}-search-security-group-ingress
-              gotemplating.fn.crossplane.io/composition-resource-name: search-security-group-ingress
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-search-security-group-ingress
+                gotemplating.fn.crossplane.io/composition-resource-name: search-security-group-ingress
             spec:
               forProvider:
                 fromPort: 443
