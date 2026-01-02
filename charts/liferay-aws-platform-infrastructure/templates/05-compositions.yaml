@@ -24,7 +24,7 @@ spec:
             {{ $liferayServiceAccountRoleName := "`}}{{ .Values.liferayServiceAccountRoleName }}{{`" }}
             {{ $nodesSecurityGroupId := "`}}{{ .Values.aws.nodesSecurityGroupId }}{{`" }}
             {{ $vpcId := "`}}{{ .Values.aws.vpcId }}{{`" }}
-            {{ $privateSubnetIds := "`}}{{ .Values.aws.privateSubnetIds | toJson | quote }}{{`" }}
+            {{ $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | toJson | quote }}{{` }}
             {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
             {{- $xr := .observed.composite.resource -}}
 
