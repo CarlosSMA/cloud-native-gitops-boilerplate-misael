@@ -20,11 +20,12 @@ spec:
         inline:
           template: |
             {{`
-            {{ $accountId := `}}{{ .Values.aws.accountId | quote }}{{` }}
-            {{ $liferayServiceAccountRoleName := `}}{{ .Values.liferayServiceAccountRoleName | quote }}{{` }}
-            {{ $nodesSecurityGroupId := `}}{{ .Values.aws.nodesSecurityGroupId | quote }}{{` }}
-            {{ $vpcId := `}}{{ .Values.aws.vpcId | quote }}{{` }}
-            {{ $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | quote }}{{` }}
+            {{- $accountId := `}}{{ .Values.aws.accountId | quote }}{{` -}}
+            {{- $liferayServiceAccountRoleName := `}}{{ .Values.liferayServiceAccountRoleName | quote }}{{` -}}
+            {{- $nodesSecurityGroupId := `}}{{ .Values.aws.nodesSecurityGroupId | quote }}{{` -}}
+            {{- $vpcId := `}}{{ .Values.aws.vpcId | quote }}{{` -}}
+            {{- $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | quote }}{{` -}}
+
             {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
             {{- $xr := .observed.composite.resource -}}
 
@@ -419,7 +420,7 @@ spec:
         addTags:
           - tags:
               DeploymentName: {{ .Values.deploymentName }}
-          - type: FromValue
+            type: FromValue
         apiVersion: tag-manager.fn.crossplane.io/v1beta1
         kind: ManagedTags
     - step: auto-detect-ready-composed-resources
