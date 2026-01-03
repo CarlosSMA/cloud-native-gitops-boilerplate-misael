@@ -50,7 +50,6 @@ liferay-default:
     com.liferay.portal.upload.UploadServletRequestImpl.max.size=0
 
     liferay.search.engine.id=opensearch
-    hibernate.dialect=com.liferay.portal.dao.orm.hibernate.PostgreSQLDialect
 
     dl.store.impl=com.liferay.portal.store.s3.S3Store
     jdbc.default.driverClassName=org.postgresql.Driver
