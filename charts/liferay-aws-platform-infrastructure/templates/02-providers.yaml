@@ -62,4 +62,15 @@ metadata:
 spec:
   package: xpkg.upbound.io/upbound/provider-kubernetes:v1.2.0
   runtimeConfigRef:
-    name: kubernetes-provider-config
+    name: kubernetes-config
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-80"
+  name: provider-opentofu
+spec:
+  package: xpkg.upbound.io/upbound/provider-opentofu:v1.0.3
+  runtimeConfigRef:
+    name: opentofu-config

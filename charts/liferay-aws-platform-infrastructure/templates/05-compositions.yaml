@@ -272,6 +272,9 @@ spec:
                   internalUserDatabaseEnabled: true
                   masterUserOptions:
                     masterUserName: {{ $searchSpec.username }}
+                    masterUserPasswordSecretRef:
+                      name: liferay-search-password
+                      key: search_password
                 encryptAtRest:
                   enabled: true
                 nodeToNodeEncryption:
@@ -321,6 +324,37 @@ spec:
                       }
                     ]
                   }
+            ---
+            apiVersion: opentofu.m.upbound.io/v1beta1
+            kind: Workspace
+            metadata:
+              annotations:
+                crossplane.io/external-name: {{ $searchName }}-password-generator
+                gotemplating.fn.crossplane.io/composition-resource-name: search-password-generator
+              labels:
+                app: liferay
+                component: search-password-generator
+              name: {{ $searchName }}-password-generator
+              namespace: {{ $xr.metadata.namespace }}
+            spec:
+              forProvider:
+                source: Inline
+                module: |
+                  resource "random_password" "password" {
+                    length=20
+                    min_lower=1
+                    min_numeric=1
+                    min_special=1
+                    min_upper=1
+                    override_special="!#%&*()-_=+[]{}<>:?"
+                    special=true
+                  }
+                  output "search_password" {
+                    sensitive=true
+                    value=random_password.password.result
+                  }
+              writeConnectionSecretToRef:
+                name: liferay-search-password
             ---
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroup
