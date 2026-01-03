@@ -429,6 +429,7 @@ spec:
             {{- end -}}
 
             {{- $searchEndpoint := "" -}}
+            {{- $searchPassword := "" -}}
             {{- if kindIs "map" $search -}}
               {{- with $search }}
                 {{- with .resource }}
@@ -437,6 +438,9 @@ spec:
                       {{- $searchEndpoint = .endpoint -}}
                     {{- end -}}
                   {{- end -}}
+                {{- end -}}
+                {{- with .connectionDetails }}
+                  {{- $searchPassword = index . "attribute.advanced_security_options.0.master_user_options.0.master_user_password" | toString -}}
                 {{- end -}}
               {{- end -}}
             {{- end -}}
@@ -482,7 +486,7 @@ spec:
                     DATABASE_PORT: {{ $databasePort | default 5432 | quote }}
                     DATABASE_USERNAME: {{ $database.resource.spec.forProvider.username | toString }}
                     OPENSEARCH_ENDPOINT: "https://{{ $searchEndpoint }}"
-                    OPENSEARCH_PASSWORD: {{ $search.connectionDetails.password | default "" | toString }}
+                    OPENSEARCH_PASSWORD: {{ $searchPassword | default "" | toString }}
                     OPENSEARCH_USERNAME: {{ $search.resource.spec.forProvider.advancedSecurityOptions.masterUserOptions.masterUserName | toString }}
                     S3_BUCKET_ID: {{ $storageName | toString }}
                     S3_BUCKET_REGION: {{ $storage.resource.spec.forProvider.region | toString }}
