@@ -23,6 +23,7 @@ spec:
             {{- $accountId := `}}{{ .Values.aws.accountId | quote }}{{` -}}
             {{- $liferayServiceAccountRoleName := `}}{{ .Values.liferayServiceAccountRoleName | quote }}{{` -}}
             {{- $nodesSecurityGroupId := `}}{{ .Values.aws.nodesSecurityGroupId | quote }}{{` -}}
+            {{- $vpcCidr := `}}{{ .Values.aws.vpcCidr | quote }}{{` -}}
             {{- $vpcId := `}}{{ .Values.aws.vpcId | quote }}{{` -}}
             {{- $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | quote }}{{` -}}
 
@@ -324,9 +325,14 @@ spec:
                         "Action": "es:*",
                         "Effect": "Allow",
                         "Principal": {
-                          "AWS": "arn:aws:iam::{{ $accountId }}:role/{{ $liferayServiceAccountRoleName }}"
+                          "AWS": "*"
                         },
                         "Resource": "arn:aws:es:{{ $searchSpec.region }}:{{ $accountId }}:domain/{{ $searchName }}/*"
+                        "Condition": {
+                          "IpAddress": {
+                            "aws:SourceIp": {{ $vpcCidr }}
+                          }
+                        }
                       }
                     ]
                   }
