@@ -91,6 +91,7 @@ spec:
             spec:
               forProvider:
                 name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
+                region: {{ $spec.region }}
                 tags:
                   Name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
                 vpcId: {{ $vpcId }}
@@ -112,6 +113,7 @@ spec:
                 ipProtocol: tcp
                 toPort: 5432
                 referencedSecurityGroupId: {{ $nodesSecurityGroupId }}
+                region: {{ $spec.region }}
                 securityGroupIdSelector:
                   matchLabels:
                     app: liferay
@@ -256,6 +258,7 @@ spec:
               namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
+                domainName: {{ $xr.metadata.name }}-search
                 region: {{ $searchSpec.region }}
                 engineVersion: {{ $searchSpec.engineVersion }}
                 clusterConfig:
@@ -339,6 +342,7 @@ spec:
             spec:
               forProvider:
                 name: {{ $xr.metadata.name }}-search-security-group
+                region: {{ $spec.region }}
                 tags:
                   Name: {{ $xr.metadata.name }}-search-security-group
                 vpcId: {{ $vpcId }}
@@ -359,6 +363,7 @@ spec:
                 ipProtocol: tcp
                 toPort: 443
                 referencedSecurityGroupId: {{ $nodesSecurityGroupId }}
+                region: {{ $spec.region }}
                 securityGroupIdSelector:
                   matchLabels:
                     app: liferay
