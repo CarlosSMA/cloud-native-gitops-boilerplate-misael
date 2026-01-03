@@ -473,7 +473,7 @@ spec:
                   stringData:
                     DATABASE_ENDPOINT: {{ $databaseAddress | toString }}
                     DATABASE_PASSWORD: {{ $database.connectionDetails.password | default "" | toString }}
-                    DATABASE_PORT: {{ $database.resource.status.atProvider.port | default 5432 | toString }}
+                    DATABASE_PORT: {{ $database.resource.status.atProvider.port | default "5432" | toString }}
                     DATABASE_USERNAME: {{ $database.resource.spec.forProvider.username | toString }}
                     OPENSEARCH_ENDPOINT: "https://{{ $searchEndpoint }}"
                     OPENSEARCH_PASSWORD: {{ $search.connectionDetails.password | default "" | toString }}
