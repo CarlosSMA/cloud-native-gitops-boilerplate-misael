@@ -272,9 +272,6 @@ spec:
                   internalUserDatabaseEnabled: true
                   masterUserOptions:
                     masterUserName: {{ $searchSpec.username }}
-                    masterUserPasswordSecretRef:
-                      name: liferay-search-password
-                      key: password
                 encryptAtRest:
                   enabled: true
                 nodeToNodeEncryption:
