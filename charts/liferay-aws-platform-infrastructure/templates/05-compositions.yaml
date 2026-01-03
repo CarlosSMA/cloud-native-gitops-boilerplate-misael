@@ -346,7 +346,7 @@ spec:
                     namespace: {{ $xr.metadata.namespace }}
                   type: Opaque
                   stringData:
-                    password: {{ print (randAlphaNum 16) "!#%&" (randUpper 1) (randNumeric 1) | shuffle }}
+                    password: {{ print (randAlphaNum 16) "7bQZ!#%_+" | shuffle }}
               managementPolicies: ["Create", "Observe", "Delete"]
             ---
             apiVersion: ec2.aws.m.upbound.io/v1beta1
