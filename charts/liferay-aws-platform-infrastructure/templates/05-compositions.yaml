@@ -327,7 +327,7 @@ spec:
                         "Principal": {
                           "AWS": "*"
                         },
-                        "Resource": "arn:aws:es:{{ $searchSpec.region }}:{{ $accountId }}:domain/{{ $searchName }}/*"
+                        "Resource": "arn:aws:es:{{ $searchSpec.region }}:{{ $accountId }}:domain/{{ $searchName }}/*",
                         "Condition": {
                           "IpAddress": {
                             "aws:SourceIp": {{ $vpcCidr }}
