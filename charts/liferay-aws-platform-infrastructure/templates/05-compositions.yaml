@@ -419,12 +419,14 @@ spec:
             {{- end -}}
 
             {{- $databaseAddress := "" -}}
+            {{- $databasePort := "" -}}
             {{- if kindIs "map" $database -}}
               {{- with $database }}
                 {{- with .resource }}
                   {{- with .status }}
                     {{- with .atProvider }}
                       {{- $databaseAddress = .address -}}
+                      {{- $databasePort = .port | toString -}}
                     {{- end -}}
                   {{- end -}}
                 {{- end -}}
@@ -482,11 +484,11 @@ spec:
                   stringData:
                     DATABASE_ENDPOINT: {{ $databaseAddress | toString }}
                     DATABASE_PASSWORD: {{ $database.connectionDetails.password | default "" | toString }}
-                    DATABASE_PORT: {{ $database.resource.status.atProvider.port | default "5432" | toString }}
+                    DATABASE_PORT: {{ $databasePort | default "5432" | toString }}
                     DATABASE_USERNAME: {{ $database.resource.spec.forProvider.username | toString }}
                     OPENSEARCH_ENDPOINT: "https://{{ $searchEndpoint }}"
                     OPENSEARCH_PASSWORD: {{ $search.connectionDetails.password | default "" | toString }}
-                    OPENSEARCH_USERNAME: {{ $search.resource.spec.username }}
+                    OPENSEARCH_USERNAME: {{ $search.resource.spec.forProvider.advancedSecurityOptions.masterUserOptions.masterUserName | toString }}
                     S3_BUCKET_ID: {{ $storageName | toString }}
                     S3_BUCKET_REGION: {{ $storage.resource.spec.forProvider.region | toString }}
             {{- end }}
