@@ -86,6 +86,7 @@ spec:
                 app: liferay
                 component: database-security-group
                 slot: {{ $slot }}
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 region: {{ $spec.region }}
@@ -102,6 +103,7 @@ spec:
                 app: liferay
                 component: database-security-group-ingress
                 slot: {{ $slot }}
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 fromPort: 5432
@@ -126,6 +128,7 @@ spec:
                 component: database-subnet-group
                 slot: {{ $slot }}
               name: {{ $xr.metadata.name }}-database-subnet-group-{{ $slot }}
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 region: {{ $spec.region }}
@@ -194,6 +197,7 @@ spec:
                 component: storage-policy
                 slot: {{ $slot }}
               name: {{ $xr.metadata.name }}-storage-policy-{{ $slot }}
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 policy: |
@@ -227,6 +231,7 @@ spec:
                 component: storage-policy-attachment
                 slot: {{ $slot }}
               name: {{ $xr.metadata.name }}-storage-policy-attachment-{{ $slot }}
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 policyArnSelector:
@@ -303,12 +308,14 @@ spec:
                 app: liferay
                 component: search-policy
               name: {{ $searchName }}-policy
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 domainNameSelector:
                   matchLabels:
                     app: liferay
                     component: search
+                  namespace: {{ $xr.metadata.namespace }}
                 region: {{ $searchSpec.region }}
                 accessPolicies: |
                   {
@@ -357,6 +364,7 @@ spec:
               labels:
                 app: liferay
                 component: search-security-group
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 region: {{ $searchSpec.region }}
@@ -372,6 +380,7 @@ spec:
               labels:
                 app: liferay
                 component: search-security-group-ingress
+              namespace: {{ $xr.metadata.namespace }}
             spec:
               forProvider:
                 fromPort: 443
