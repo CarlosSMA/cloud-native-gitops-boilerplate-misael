@@ -274,7 +274,7 @@ spec:
                     masterUserName: {{ $searchSpec.username }}
                     masterUserPasswordSecretRef:
                       name: liferay-search-password
-                      key: search_password
+                      key: password
                 encryptAtRest:
                   enabled: true
                 nodeToNodeEncryption:
@@ -324,6 +324,30 @@ spec:
                       }
                     ]
                   }
+            ---
+            apiVersion: kubernetes.m.crossplane.io/v1alpha1
+            kind: Object
+            metadata:
+              annotations:
+                crossplane.io/external-name: {{ $xr.metadata.name }}-search-password-secret
+                gotemplating.fn.crossplane.io/composition-resource-name: search-password-secret
+              labels:
+                app: liferay
+                component: search-password-secret
+              name: {{ $searchName }}-password-secret
+              namespace: {{ $xr.metadata.namespace }}
+            spec:
+              forProvider:
+                manifest:
+                  apiVersion: v1
+                  kind: Secret
+                  metadata:
+                    name: liferay-search-password
+                    namespace: {{ $xr.metadata.namespace }}
+                  type: Opaque
+                  stringData:
+                    password: {{ randAlphaNum 20 }}
+              managementPolicies: ["Create", "Observe", "Delete"]
             ---
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroup
