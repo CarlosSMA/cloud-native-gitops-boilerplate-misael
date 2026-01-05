@@ -26,8 +26,12 @@ spec:
             {{- $vpcId := `}}{{ .Values.aws.vpcId | quote }}{{` -}}
             {{- $privateSubnetIds := `}}{{ .Values.aws.privateSubnetIds | quote }}{{` -}}
 
-            {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
             {{- $xr := .observed.composite.resource -}}
+
+            {{- $managementPolicies := $xr.spec.deletionProtection | ternary (list "Create" "Observe" "Update") (list "*") | toJson -}}
+            {{- $managementPoliciesNoUpdate := $xr.spec.deletionProtection | ternary (list "Create" "Observe") (list "Create" "Delete" "Observe") | toJson -}}
+            {{- $privateSubnetIdsList := $privateSubnetIds | fromJson -}}
+            {{- $projectId := $xr.spec.projectId -}}
 
             {{- $databaseSpec := $xr.spec.database }}
             {{- $databaseSlots := dict "blue" $databaseSpec.blue "green" $databaseSpec.green -}}
@@ -78,6 +82,7 @@ spec:
                   Active: {{ printf "%t" (eq $slot $databaseSpec.activeSlot) }}
                   Backup: true
                   Name: {{ $xr.metadata.name }}-database-{{ $slot }}
+              managementPolicies: {{ $managementPolicies }}
               writeConnectionSecretToRef:
                 name: liferay-database-{{ $slot }}-credentials
             ---
@@ -97,6 +102,7 @@ spec:
                 tags:
                   Name: {{ $xr.metadata.name }}-database-security-group-{{ $slot }}
                 vpcId: {{ $vpcId }}
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroupIngressRule
@@ -120,6 +126,7 @@ spec:
                     app: liferay
                     component: database-security-group
                     slot: {{ $slot }}
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: rds.aws.m.upbound.io/v1beta1
             kind: SubnetGroup
@@ -139,6 +146,7 @@ spec:
                 subnetIds: {{ $privateSubnetIdsList | toJson }}
                 tags:
                   Name: {{ $xr.metadata.name }}-database-{{ $slot }}-subnets
+              managementPolicies: {{ $managementPolicies }}
             {{- end }}
 
             {{- $storageSpec := $xr.spec.storage }}
@@ -165,6 +173,7 @@ spec:
                   Active: {{ printf "%t" (eq $slot $storageSpec.activeSlot) }}
                   Backup: true
                   Name: {{ $xr.metadata.name }}-storage-{{ $slot }}
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: s3.aws.m.upbound.io/v1beta1
             kind: BucketVersioning
@@ -189,6 +198,7 @@ spec:
                 region: {{ $spec.region }}
                 versioningConfiguration:
                   status: Enabled
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: iam.aws.m.upbound.io/v1beta1
             kind: Policy
@@ -223,6 +233,7 @@ spec:
                     ],
                     "Version": "2012-10-17"
                   }
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: iam.aws.m.upbound.io/v1beta1
             kind: RolePolicyAttachment
@@ -244,10 +255,12 @@ spec:
                     component: storage-policy
                     slot: {{ $slot }}
                 role: {{ $liferayServiceAccountRoleName }}
+              managementPolicies: {{ $managementPolicies }}
             {{- end }}
 
+            {{- $searchUidHash := printf "%s-%s" $projectId $xr.metadata.name | sha256sum | trunc 6 -}}
+            {{- $searchName := printf "%.15s-%s-search" $xr.metadata.name $searchUidHash -}}
             {{- $searchSpec := $xr.spec.search }}
-            {{- $searchName := printf "%.20s-search" $xr.metadata.name -}}
 
             ---
             apiVersion: opensearch.aws.m.upbound.io/v1beta1
@@ -299,6 +312,7 @@ spec:
                       app: liferay
                       component: search-security-group
                   subnetIds: {{ slice $privateSubnetIdsList 0 2 | toJson }}
+              managementPolicies: {{ $managementPolicies }}
               writeConnectionSecretToRef:
                 name: liferay-search-credentials
             ---
@@ -330,6 +344,7 @@ spec:
                       }
                     ]
                   }
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: kubernetes.m.crossplane.io/v1alpha1
             kind: Object
@@ -353,7 +368,7 @@ spec:
                   type: Opaque
                   stringData:
                     password: {{ print (randAlphaNum 16) "7bQZ!#%_+" | shuffle }}
-              managementPolicies: ["Create", "Observe", "Delete"]
+              managementPolicies: {{ $managementPoliciesNoUpdate }}
             ---
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroup
@@ -370,6 +385,7 @@ spec:
                 tags:
                   Name: {{ $searchName }}-security-group
                 vpcId: {{ $vpcId }}
+              managementPolicies: {{ $managementPolicies }}
             ---
             apiVersion: ec2.aws.m.upbound.io/v1beta1
             kind: SecurityGroupIngressRule
@@ -391,6 +407,7 @@ spec:
                   matchLabels:
                     app: liferay
                     component: search-security-group
+              managementPolicies: {{ $managementPolicies }}
             `}}
     - step: managed-service-details-secret
       functionRef:
@@ -494,6 +511,7 @@ spec:
                     OPENSEARCH_USERNAME: {{ $search.resource.spec.forProvider.advancedSecurityOptions.masterUserOptions.masterUserName | toString }}
                     S3_BUCKET_ID: {{ $storageName | toString }}
                     S3_BUCKET_REGION: {{ $storage.resource.spec.forProvider.region | toString }}
+              managementPolicies: {{ $managementPolicies }}
             {{- end }}
             `}}
     - step: apply-default-tags

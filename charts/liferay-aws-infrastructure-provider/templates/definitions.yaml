@@ -62,6 +62,12 @@ spec:
                   required:
                     - activeSlot
                   type: object
+                deletionProtection:
+                  type: boolean
+                  default: false
+                projectId:
+                  type: string
+                  default: ""
                 search:
                   properties:
                     engineVersion:
@@ -117,6 +123,8 @@ spec:
                   type: object
               required:
                 - database
+                - deletionProtection
+                - projectId
                 - search
                 - storage
               type: object
