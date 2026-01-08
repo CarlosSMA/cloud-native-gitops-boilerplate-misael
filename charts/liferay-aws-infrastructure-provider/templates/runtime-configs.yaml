@@ -17,6 +17,10 @@ spec:
       template:
         metadata:
           annotations:
+            instrumentation.opentelemetry.io/inject-dotnet: "false"
+            instrumentation.opentelemetry.io/inject-java: "false"
+            instrumentation.opentelemetry.io/inject-nodejs: "false"
+            instrumentation.opentelemetry.io/inject-python: "false"
             sidecar.opentelemetry.io/inject: "false"
           labels:
             pkg.crossplane.io/provider: provider-kubernetes
@@ -51,6 +55,10 @@ spec:
       template:
         metadata:
           annotations:
+            instrumentation.opentelemetry.io/inject-dotnet: "false"
+            instrumentation.opentelemetry.io/inject-java: "false"
+            instrumentation.opentelemetry.io/inject-nodejs: "false"
+            instrumentation.opentelemetry.io/inject-python: "false"
             sidecar.opentelemetry.io/inject: "false"
           labels:
             pkg.crossplane.io/provider: provider-aws-ec2
@@ -85,6 +93,10 @@ spec:
       template:
         metadata:
           annotations:
+            instrumentation.opentelemetry.io/inject-dotnet: "false"
+            instrumentation.opentelemetry.io/inject-java: "false"
+            instrumentation.opentelemetry.io/inject-nodejs: "false"
+            instrumentation.opentelemetry.io/inject-python: "false"
             sidecar.opentelemetry.io/inject: "false"
           labels:
             pkg.crossplane.io/provider: provider-aws-iam
@@ -119,6 +131,10 @@ spec:
       template:
         metadata:
           annotations:
+            instrumentation.opentelemetry.io/inject-dotnet: "false"
+            instrumentation.opentelemetry.io/inject-java: "false"
+            instrumentation.opentelemetry.io/inject-nodejs: "false"
+            instrumentation.opentelemetry.io/inject-python: "false"
             sidecar.opentelemetry.io/inject: "false"
           labels:
             pkg.crossplane.io/provider: provider-aws-opensearch
@@ -153,6 +169,10 @@ spec:
       template:
         metadata:
           annotations:
+            instrumentation.opentelemetry.io/inject-dotnet: "false"
+            instrumentation.opentelemetry.io/inject-java: "false"
+            instrumentation.opentelemetry.io/inject-nodejs: "false"
+            instrumentation.opentelemetry.io/inject-python: "false"
             sidecar.opentelemetry.io/inject: "false"
           labels:
             pkg.crossplane.io/provider: provider-aws-rds
@@ -187,6 +207,10 @@ spec:
       template:
         metadata:
           annotations:
+            instrumentation.opentelemetry.io/inject-dotnet: "false"
+            instrumentation.opentelemetry.io/inject-java: "false"
+            instrumentation.opentelemetry.io/inject-nodejs: "false"
+            instrumentation.opentelemetry.io/inject-python: "false"
             sidecar.opentelemetry.io/inject: "false"
           labels:
             pkg.crossplane.io/provider: provider-aws-s3
