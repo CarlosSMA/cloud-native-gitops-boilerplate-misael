@@ -25,9 +25,9 @@ spec:
             - name: package-runtime
               resources:
                 limits:
-                  memory: 1Gi
+                  memory: 256Mi
                 requests:
-                  memory: 512Mi
+                  memory: 64Mi
           serviceAccountName: provider-kubernetes
   serviceAccountTemplate:
     metadata:
@@ -61,7 +61,7 @@ spec:
                 limits:
                   memory: 1Gi
                 requests:
-                  memory: 512Mi
+                  memory: 256Mi
           serviceAccountName: provider-aws-ec2
   serviceAccountTemplate:
     metadata:
@@ -93,9 +93,9 @@ spec:
             - name: package-runtime
               resources:
                 limits:
-                  memory: 1Gi
+                  memory: 256Mi
                 requests:
-                  memory: 512Mi
+                  memory: 64Mi
           serviceAccountName: provider-aws-iam
   serviceAccountTemplate:
     metadata:
@@ -127,9 +127,9 @@ spec:
             - name: package-runtime
               resources:
                 limits:
-                  memory: 1Gi
-                requests:
                   memory: 512Mi
+                requests:
+                  memory: 128Mi
           serviceAccountName: provider-aws-opensearch
   serviceAccountTemplate:
     metadata:
@@ -163,7 +163,7 @@ spec:
                 limits:
                   memory: 1Gi
                 requests:
-                  memory: 512Mi
+                  memory: 256Mi
           serviceAccountName: provider-aws-rds
   serviceAccountTemplate:
     metadata:
@@ -195,9 +195,9 @@ spec:
             - name: package-runtime
               resources:
                 limits:
-                  memory: 1Gi
-                requests:
                   memory: 512Mi
+                requests:
+                  memory: 128Mi
           serviceAccountName: provider-aws-s3
   serviceAccountTemplate:
     metadata:
