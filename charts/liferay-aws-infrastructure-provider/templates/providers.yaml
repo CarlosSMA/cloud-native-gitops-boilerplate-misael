@@ -7,6 +7,7 @@ metadata:
   name: provider-aws-ec2
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-ec2:v2.3.0
+  skipDependencyResolution: true
   runtimeConfigRef:
     name: aws-ec2-config
 ---
@@ -19,6 +20,7 @@ metadata:
   name: provider-aws-iam
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-iam:v2.3.0
+  skipDependencyResolution: true
   runtimeConfigRef:
     name: aws-iam-config
 ---
@@ -31,6 +33,7 @@ metadata:
   name: provider-aws-opensearch
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-opensearch:v2.3.0
+  skipDependencyResolution: true
   runtimeConfigRef:
     name: aws-opensearch-config
 ---
@@ -43,6 +46,7 @@ metadata:
   name: provider-aws-rds
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-rds:v2.3.0
+  skipDependencyResolution: true
   runtimeConfigRef:
     name: aws-rds-config
 ---
@@ -55,6 +59,7 @@ metadata:
   name: provider-aws-s3
 spec:
   package: xpkg.upbound.io/upbound/provider-aws-s3:v2.3.0
+  skipDependencyResolution: true
   runtimeConfigRef:
     name: aws-s3-config
 ---
@@ -67,6 +72,7 @@ metadata:
   name: provider-family-aws
 spec:
   package: xpkg.upbound.io/upbound/provider-family-aws:v2.3.0
+  skipDependencyResolution: true
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
@@ -77,5 +83,6 @@ metadata:
   name: provider-kubernetes
 spec:
   package: xpkg.upbound.io/upbound/provider-kubernetes:v1.2.0
+  skipDependencyResolution: true
   runtimeConfigRef:
     name: kubernetes-config
