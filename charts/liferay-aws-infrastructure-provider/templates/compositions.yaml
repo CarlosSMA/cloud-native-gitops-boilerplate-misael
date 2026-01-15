@@ -86,6 +86,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: database-security-group
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
                     slot: {{ $slot }}
                 tags:
                   Active: {{ printf "%t" (eq $slot $databaseSpec.activeSlot) }}
@@ -138,6 +140,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: database-security-group
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
                     slot: {{ $slot }}
               managementPolicies: {{ $managementPolicies }}
             ---
@@ -209,6 +213,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: storage
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
                     slot: {{ $slot }}
                 region: {{ $spec.region }}
                 rule:
@@ -236,6 +242,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: storage
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
                     slot: {{ $slot }}
                 ignorePublicAcls: true
                 region: {{ $spec.region }}
@@ -262,6 +270,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: storage
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
                     slot: {{ $slot }}
                   namespace: {{ $namespace }}
                 region: {{ $spec.region }}
@@ -326,6 +336,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: storage-policy
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
                     slot: {{ $slot }}
                 role: {{ $liferayServiceAccountRoleName }}
               managementPolicies: {{ $managementPolicies }}
@@ -385,6 +397,8 @@ spec:
                     matchLabels:
                       app: liferay
                       component: search-security-group
+                      environmentId: {{ $environmentId }}
+                      projectId: {{ $projectId }}
                   subnetIds: {{ slice $privateSubnetIdsList 0 2 | toJson }}
               managementPolicies: {{ $managementPolicies }}
               writeConnectionSecretToRef:
@@ -494,6 +508,8 @@ spec:
                   matchLabels:
                     app: liferay
                     component: search-security-group
+                    environmentId: {{ $environmentId }}
+                    projectId: {{ $projectId }}
               managementPolicies: {{ $managementPolicies }}
             `}}
     - step: managed-service-details-secret
