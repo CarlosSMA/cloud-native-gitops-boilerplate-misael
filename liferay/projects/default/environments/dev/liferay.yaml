@@ -1,4 +1,7 @@
 liferay-default:
+  image:
+    repository: carlossma/dxp
+    tag: custom_image_slim
   customInitContainers:
     x-liferay-prepopulate-data:
         -   containerTemplate: |
