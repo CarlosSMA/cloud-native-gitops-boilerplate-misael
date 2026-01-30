@@ -1,57 +1,57 @@
 liferay-default:
   customInitContainers:
     x-liferay-prepopulate-data:
-        -   containerTemplate: |
-                -   command:
-                        -   bash
-                        -   -c
-                        -   |
-                                rm -fr /temp/liferay/liferay.pid 2>/dev/null
+      - containerTemplate: |
+          -   command:
+                  -   bash
+                  -   -c
+                  -   |
+                          rm -fr /temp/liferay/liferay.pid 2>/dev/null
 
-                                mkdir -p /temp/liferay
+                          mkdir -p /temp/liferay
 
-                                touch /temp/liferay/liferay.pid
+                          touch /temp/liferay/liferay.pid
 
-                                if [ ! -d /temp/liferay/data ] || [ -z "$(ls -A /temp/liferay/data)" ]
-                                then
-                                    mkdir -p /temp/liferay/data
+                          if [ ! -d /temp/liferay/data ] || [ -z "$(ls -A /temp/liferay/data)" ]
+                          then
+                              mkdir -p /temp/liferay/data
 
-                                    cp -frv /opt/liferay/data/* /temp/liferay/data
-                                fi
+                              cp -frv /opt/liferay/data/* /temp/liferay/data
+                          fi
 
-                                if [ ! -d /temp/liferay/glowroot ] || [ -z "$(ls -A /temp/liferay/glowroot)" ]
-                                then
-                                    mkdir -p /temp/liferay/glowroot
+                          if [ ! -d /temp/liferay/glowroot ] || [ -z "$(ls -A /temp/liferay/glowroot)" ]
+                          then
+                              mkdir -p /temp/liferay/glowroot
 
-                                    cp -frv /opt/liferay/glowroot/* /temp/liferay/glowroot
-                                fi
+                              cp -frv /opt/liferay/glowroot/* /temp/liferay/glowroot
+                          fi
 
-                                if [ ! -f /temp/tomcat/conf/server.xml ]
-                                then
-                                    mkdir -p /temp/tomcat/conf
+                          if [ ! -f /temp/tomcat/conf/server.xml ]
+                          then
+                              mkdir -p /temp/tomcat/conf
 
-                                    cp /opt/liferay/tomcat/conf/logging.properties /temp/tomcat/conf/logging.properties
+                              cp /opt/liferay/tomcat/conf/logging.properties /temp/tomcat/conf/logging.properties
 
-                                    echo -e "\norg.apache.catalina.tribes.membership.cloud.level=SEVERE" >> /temp/tomcat/conf/logging.properties
+                              echo -e "\norg.apache.catalina.tribes.membership.cloud.level=SEVERE" >> /temp/tomcat/conf/logging.properties
 
-                                    cat /opt/liferay/tomcat/conf/server.xml | sed '/<!--.*-->/d' | sed '/<!--/,/-->/d' > /temp/tomcat/conf/server.xml
-                                fi
+                              cat /opt/liferay/tomcat/conf/server.xml | sed '/<!--.*-->/d' | sed '/<!--/,/-->/d' > /temp/tomcat/conf/server.xml
+                          fi
 
-                                if [ -d /opt/liferay/deploy ] && [ -z "$(ls -A /temp/liferay/deploy/*license* 2>/dev/null)" ]
-                                then
-                                    if [ ! -d /temp/liferay/data/license ] || [ -z "$(ls -A /temp/liferay/data/license/*.li)" ]
-                                    then
-                                        mkdir -p /temp/liferay/deploy
+                          if [ -d /opt/liferay/deploy ] && [ -z "$(ls -A /temp/liferay/deploy/*license* 2>/dev/null)" ]
+                          then
+                              if [ ! -d /temp/liferay/data/license ] || [ -z "$(ls -A /temp/liferay/data/license/*.li)" ]
+                              then
+                                  mkdir -p /temp/liferay/deploy
 
-                                        cp -fv /opt/liferay/deploy/* /temp/liferay/deploy
-                                    fi
-                                fi
-                    image: {{ printf "%s:%s" .image.repository (.image.tag | toString) }}
-                    imagePullPolicy: {{ .image.pullPolicy }}
-                    name: liferay-prepopulate-data
-                    volumeMounts:
-                        -   mountPath: /temp
-                            name: liferay-persistent-volume
+                                  cp -fv /opt/liferay/deploy/* /temp/liferay/deploy
+                              fi
+                          fi
+              image: {{ printf "%s:%s" .image.repository (.image.tag | toString) }}
+              imagePullPolicy: {{ .image.pullPolicy }}
+              name: liferay-prepopulate-data
+              volumeMounts:
+                  -   mountPath: /temp
+                      name: liferay-persistent-volume
   image:
     tag: 2025.q1.20-lts-slim
   gateway:
@@ -87,4 +87,4 @@ liferay-default:
     web.server.http.port=80
     web.server.https.port=443
     web.server.protocol=http
-  replicaCount: 1
+  replicaCount: 0
