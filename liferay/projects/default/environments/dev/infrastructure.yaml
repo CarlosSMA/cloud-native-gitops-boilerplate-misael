@@ -4,4 +4,4 @@ database:
 search:
   opensearch:
     instanceType: r6g.large.search
-    instanceCount: 1
+    instanceCount: 2

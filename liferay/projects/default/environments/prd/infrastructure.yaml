@@ -4,5 +4,5 @@ database:
 search:
   opensearch:
     instanceType: r6g.large.search
-    instanceCount: 3
+    instanceCount: 2
 deletionProtection: true
