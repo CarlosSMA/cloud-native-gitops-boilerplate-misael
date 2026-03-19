@@ -1,9 +1,0 @@
-liferay-default:
-  replicaCount: 1
-  resources:
-    requests:
-      cpu: "4"
-      memory: 4Gi
-    limits:
-      cpu: "4"
-      memory: 4Gi
