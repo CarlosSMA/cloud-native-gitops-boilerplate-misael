@@ -14,3 +14,6 @@ liferay-default:
     timeoutSeconds: 5
   securityContext:
     readOnlyRootFilesystem: false
+  podSecurityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: Always
