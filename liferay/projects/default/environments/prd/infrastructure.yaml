@@ -1,8 +1,15 @@
 database:
-  instanceClass: db.r6g.xlarge
-  storageGB: 50
+  instanceClass: db.t3.medium
+  storageGB: 20
 search:
   opensearch:
     instanceType: r6g.large.search
     instanceCount: 2
-deletionProtection: false  # Workaround: chart bug missing LateInitialize in managementPolicies
+endpoints:
+  misaelneto:
+    hostname: "prd.misaelneto.com"
+    port: 443
+    protocol: HTTPS
+    tls:
+      externalSecretNames:
+        - "liferay/certificates/misaelneto-tls"

@@ -5,3 +5,11 @@ search:
   opensearch:
     instanceType: r6g.large.search
     instanceCount: 2
+endpoints:
+  misaelneto:
+    hostname: "dev.misaelneto.com"
+    port: 443
+    protocol: HTTPS
+    tls:
+      externalSecretNames:
+        - "liferay/certificates/misaelneto-tls"

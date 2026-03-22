@@ -1,0 +1,7 @@
+liferay-default:
+  network:
+    enabled: true
+    endpointRef: misaelneto
+    forceHttpsRedirect: true
+    hostnames:
+      - "dev.misaelneto.com"
