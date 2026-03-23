@@ -2,6 +2,8 @@ liferay-default:
   replicaCount: 1
   image:
     tag: "2025.q4.12"
+  annotations:
+    instrumentation.opentelemetry.io/inject-java: "false"
   serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::294825482201:role/misael-cne-irsa
