@@ -1,5 +1,4 @@
 liferay-default:
-  replicaCount: 2
   network:
     enabled: true
     endpointRef: misaelneto
