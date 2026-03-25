@@ -31,6 +31,9 @@ liferay-default:
     httpGet:
       path: /c/portal/robots
       port: http
+      httpHeaders:
+        - name: Host
+          value: localhost
     initialDelaySeconds: 60
     periodSeconds: 10
     timeoutSeconds: 5
