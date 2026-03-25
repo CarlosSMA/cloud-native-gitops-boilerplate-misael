@@ -12,8 +12,8 @@ liferay-default:
     endpointRef: misaelneto
     forceHttpsRedirect: true
     hostnames:
-      - "prd.misaelneto.com"
+      - "prd-aws.misaelneto.com"
   portalProperties: |
-    company.default.virtual.host.name=prd.misaelneto.com
-    company.default.web.id=prd.misaelneto.com
+    company.default.virtual.host.name=prd-aws.misaelneto.com
+    company.default.web.id=prd-aws.misaelneto.com
     company.default.virtual.host.mail.domain=misaelneto.com

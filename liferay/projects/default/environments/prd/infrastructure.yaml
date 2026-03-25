@@ -7,7 +7,7 @@ search:
     instanceCount: 2
 endpoints:
   misaelneto:
-    hostname: "prd.misaelneto.com"
+    hostname: "prd-aws.misaelneto.com"
     port: 443
     protocol: HTTPS
     tls:
